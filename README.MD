@@ -10,5 +10,7 @@ Tested with PaperSpigot 1.15.2 (build 183)
 ### Use example:
 
 /mute SaiintBrisson Spam 1d 6h - mutes SaiintBrisson for one day and six hours
+
 /mute SaiintBrisson - mutes SaiintBrisson permanently
+
 /unmute SaiintBrisson - unmutes SaiintBrisson
