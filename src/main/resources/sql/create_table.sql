@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS muted_players (
     author VARCHAR(16) NOT NULL,
 
     reason VARCHAR(255) DEFAULT 'No reason provided',
-    expiration TIMESTAMP,
+    expiration TIMESTAMP NULL,
 
     date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

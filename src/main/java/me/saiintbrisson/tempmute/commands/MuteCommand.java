@@ -116,7 +116,8 @@ public class MuteCommand {
         final Timestamp expirationDate = model == null ? null : model.getExpirationDate();
         model = builder.build();
 
-        if(expirationDate != null && expirationDate.after(model.getExpirationDate())) {
+        if((expirationDate != null && model.getExpirationDate() != null)
+            && expirationDate.after(model.getExpirationDate())) {
             execution.sendMessage(plugin.getMessage("alreadyTemporarilyMuted"));
             return;
         }
