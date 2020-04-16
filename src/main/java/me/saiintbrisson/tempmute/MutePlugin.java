@@ -51,6 +51,12 @@ public class MutePlugin extends JavaPlugin {
 
         blockedCommands = getConfig().getStringList("blockedCommands");
 
+        registerCommands();
+
+        registerListeners(new PlayerListener(this));
+    }
+
+    private void registerCommands() {
         commandFrame = new CommandFrame(this);
         commandFrame.registerType(OfflinePlayer.class, Bukkit::getOfflinePlayer);
 
@@ -61,22 +67,6 @@ public class MutePlugin extends JavaPlugin {
             new MuteCommand(this),
             new UnmuteCommand(this)
         );
-
-        registerListeners(new PlayerListener(this));
-    }
-
-    public void reload() {
-        reloadConfig();
-        dataSource.close();
-
-        initDatabase();
-
-        blockedCommands = getConfig().getStringList("blockedCommands");
-
-        commandFrame.setLackPermMessage(getMessage("lackPermissions"));
-        commandFrame.setUsageMessage(getMessage("usage"));
-
-        controller.reloadAll();
     }
 
     private boolean initDatabase() {
@@ -113,6 +103,20 @@ public class MutePlugin extends JavaPlugin {
 
     public String getMessage(String message) {
         return getMessage("message." + message, null);
+    }
+
+    public void reload() {
+        reloadConfig();
+        dataSource.close();
+
+        initDatabase();
+
+        blockedCommands = getConfig().getStringList("blockedCommands");
+
+        commandFrame.setLackPermMessage(getMessage("lackPermissions"));
+        commandFrame.setUsageMessage(getMessage("usage"));
+
+        controller.reloadAll();
     }
 
 }

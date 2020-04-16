@@ -50,53 +50,12 @@ public class MuteCommand {
             .muteDate(Timestamp.from(Instant.now()));
 
         if(execution.argsCount() == 2) {
-            final String arg = execution.getArg(1);
-            final Timestamp timestamp = DateUtil.convertToTimestamp(
-                arg
-            );
-
-            if(timestamp == null) {
-                builder.reason(arg);
-            } else {
-                builder.expirationDate(timestamp);
-            }
+            singleArgument(execution, builder);
         } else if(execution.argsCount() > 2) {
-            final Timestamp timestamp = DateUtil.convertToTimestamp(
-                execution.getArg(execution.argsCount() - 1)
-            );
-
-            String[] reason;
-            if(timestamp == null) {
-                reason = execution.getArgs(1, execution.argsCount());
-            } else {
-                reason = execution.getArgs(1, execution.argsCount() - 1);
-                builder.expirationDate(timestamp);
-            }
-
-            builder.reason(String.join(" ", reason));
+            multipleArguments(execution, builder);
         }
 
-        final Timestamp expirationDate = muteModel == null ? null : muteModel.getExpirationDate();
-        muteModel = builder.build();
-
-        if(expirationDate != null && expirationDate.after(muteModel.getExpirationDate())) {
-            execution.sendMessage(plugin.getMessage("alreadyTemporarilyMuted"));
-            return;
-        }
-
-        plugin.getController().insertAndSave(muteModel);
-        execution.sendMessage(muteModel.parseMessage(plugin.getMessage("successfullyMuted")));
-
-        Player player = ((Player) target);
-        if(muteModel.isTemporary()) {
-            player.sendMessage(
-                muteModel.parseMessage(plugin.getMessage("temporaryMute"))
-            );
-        } else {
-            player.sendMessage(
-                muteModel.parseMessage(plugin.getMessage("permanentMute"))
-            );
-        }
+        processBuilder(execution, (Player) target, muteModel, builder);
     }
 
     @Command(name = "mute.?", aliases = "help")
@@ -121,6 +80,57 @@ public class MuteCommand {
     public void muteReload(Execution execution) {
         plugin.reload();
         execution.sendMessage(plugin.getMessage("reloaded"));
+    }
+
+    private void singleArgument(Execution execution, MuteModel.MuteModelBuilder builder) {
+        final String arg = execution.getArg(1);
+        final Timestamp timestamp = DateUtil.convertToTimestamp(
+            arg
+        );
+
+        if(timestamp == null) {
+            builder.reason(arg);
+        } else {
+            builder.expirationDate(timestamp);
+        }
+    }
+
+    private void multipleArguments(Execution execution, MuteModel.MuteModelBuilder builder) {
+        final Timestamp timestamp = DateUtil.convertToTimestamp(
+            execution.getArg(execution.argsCount() - 1)
+        );
+
+        String[] reason;
+        if(timestamp == null) {
+            reason = execution.getArgs(1, execution.argsCount());
+        } else {
+            reason = execution.getArgs(1, execution.argsCount() - 1);
+            builder.expirationDate(timestamp);
+        }
+
+        builder.reason(String.join(" ", reason));
+    }
+
+    private void processBuilder(Execution execution, Player target,
+                                MuteModel model, MuteModel.MuteModelBuilder builder) {
+        final Timestamp expirationDate = model == null ? null : model.getExpirationDate();
+        model = builder.build();
+
+        if(expirationDate != null && expirationDate.after(model.getExpirationDate())) {
+            execution.sendMessage(plugin.getMessage("alreadyTemporarilyMuted"));
+            return;
+        }
+
+        plugin.getController().insertAndSave(model);
+        execution.sendMessage(model.parseMessage(plugin.getMessage("successfullyMuted")));
+
+        target.sendMessage(
+            model.parseMessage(plugin.getMessage(
+                model.isTemporary()
+                    ? "temporaryMute"
+                    : "permanentMute"
+            ))
+        );
     }
 
 }
