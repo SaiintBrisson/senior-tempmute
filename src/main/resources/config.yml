@@ -1,0 +1,39 @@
+database:
+  url: 'jdbc:mysql://localhost:3306/test?characterEncoding=latin1'
+  username: root
+  password: root
+
+  # Optional SQL driver, do not change if you're not sure. Default: MySQL
+  driver: 'com.mysql.jdbc.Driver'
+
+# Available placeholders: {id}, {name}, {author}, {reason}, {expiration}, {date}
+message:
+  lackPermissions: '&cYou do not have enough permissions to execute this command.'
+  usage: '&cCorrect usage: &e/{usage}&c.'
+
+  offlinePlayer: '&cThe specified player must be online.'
+  alreadyPermanentlyMuted: '&cPlayer already permanently muted.'
+  alreadyTemporarilyMuted: '&cPlayer already temporarily muted for a longer time period.'
+  cannotMuteSelf: '&cCannot mute yourself.'
+  successfullyMuted: '&aSuccessfully muted &f{name}&a!'
+
+  playerNotMuted: '&cThe specified player must be muted.'
+  playerUnmuted: '&aSuccessfully unmuted &f{name}&a.'
+  unmuted: '&aYou have been unmuted.'
+
+  temporaryMute: '&cYou are muted until: &f{expiration}&c, reason: &f{reason}&c.'
+  permanentMute: '&cYou are permanently muted, reason: &f{reason}&c.'
+
+  reloaded: '&aReloaded successfully!'
+
+# Commands blocked while muted
+blockedCommands:
+  - g
+  - l
+  - global
+  - local
+  - tell
+  - whisper
+  - msg
+  - message
+  - me

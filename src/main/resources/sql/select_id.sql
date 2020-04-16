@@ -1,0 +1,1 @@
+SELECT * FROM muted_players WHERE id = ?;
