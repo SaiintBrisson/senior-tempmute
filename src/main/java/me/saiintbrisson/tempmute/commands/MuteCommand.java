@@ -84,31 +84,47 @@ public class MuteCommand {
 
     private void singleArgument(Execution execution, MuteModel.MuteModelBuilder builder) {
         final String arg = execution.getArg(1);
-        final Timestamp timestamp = DateUtil.convertToTimestamp(
-            arg
-        );
+        final Long timestamp = DateUtil.convertToTimestamp(arg);
 
         if(timestamp == null) {
             builder.reason(arg);
         } else {
-            builder.expirationDate(timestamp);
+            builder.expirationDate(
+                Timestamp.from(
+                    Instant.ofEpochMilli(System.currentTimeMillis() + timestamp)
+                )
+            );
         }
     }
 
     private void multipleArguments(Execution execution, MuteModel.MuteModelBuilder builder) {
-        final Timestamp timestamp = DateUtil.convertToTimestamp(
-            execution.getArg(execution.argsCount() - 1)
-        );
+        long time = 0;
 
-        String[] reason;
-        if(timestamp == null) {
-            reason = execution.getArgs(1, execution.argsCount());
-        } else {
-            reason = execution.getArgs(1, execution.argsCount() - 1);
-            builder.expirationDate(timestamp);
+        int s = 0;
+        for(int i = execution.argsCount() - 1; i > 0; i--) {
+            final String arg = execution.getArg(i);
+            if(arg == null) break;
+
+            final Long aLong = DateUtil.convertToTimestamp(arg);
+            if(aLong == null) break;
+
+            time += aLong;
+            s++;
         }
 
-        builder.reason(String.join(" ", reason));
+        String[] reason;
+        if(time == 0) {
+            reason = execution.getArgs(1, execution.argsCount());
+        } else {
+            reason = execution.getArgs(1, execution.argsCount() - s);
+            builder.expirationDate(
+                Timestamp.from(
+                    Instant.ofEpochMilli(System.currentTimeMillis() + time)
+                )
+            );
+        }
+
+        builder.reason(reason == null || reason.length == 0 ? null : String.join(" ", reason));
     }
 
     private void processBuilder(Execution execution, Player target,

@@ -2,12 +2,9 @@ package me.saiintbrisson.tempmute.utils;
 
 import lombok.AllArgsConstructor;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 public class DateUtil {
 
-    public static Timestamp convertToTimestamp(String string) {
+    public static Long convertToTimestamp(String string) {
         string = string.toUpperCase();
 
         long time;
@@ -20,11 +17,7 @@ public class DateUtil {
         for(MuteTime value : MuteTime.values()) {
             if(!string.endsWith(String.valueOf(value.name().charAt(0)))) continue;
 
-            return Timestamp.from(
-                Instant.ofEpochMilli(
-                    System.currentTimeMillis() + (time * value.multiplier)
-                )
-            );
+            return time * value.multiplier;
         }
 
         return null;
